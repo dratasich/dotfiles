@@ -1,7 +1,15 @@
-# shortcuts
+# --- shortcuts ---
+
+alias v="nvim"
+
+alias fd="fdfind"
+alias bat="batcat"
+
 alias k kubectl
 alias gitlog 'git log --all --graph --decorate'
 alias pwdgen 'head /dev/urandom | tr -dc A-Za-z0-9 | head -c32'
+
+# --- functions ---
 
 # envsource for fish (cf. `source .envfile`)
 # https://gist.github.com/nikoheikkila/dd4357a178c8679411566ba2ca280fcc

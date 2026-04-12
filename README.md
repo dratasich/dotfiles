@@ -30,3 +30,12 @@ fisher install evanlucas/fish-kubectl-completions
 # get nvm to work in fish
 fisher install jorgebucaran/nvm.fish
 ```
+
+## References
+
+- [fish config](https://fishshell.com/docs/current/index.html#configuration)
+
+### CLI Tools
+
+- [rg/ripgrep guide](https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md)
+- [fd and rg intro](https://brtkwr.com/posts/2025-07-21-modern-cli-tools-fd-and-ripgrep/)
