@@ -19,7 +19,7 @@
       community.general.pacman:
         name: "{{ packages_arch }}"
         state: present
-      when: ansible_os_family == "Archlinux"
+      when: ansible_facts["os_family"] == "Archlinux"
 
     - name: Install core packages (Debian)
       become: true
@@ -27,7 +27,7 @@
         name: "{{ packages_debian }}"
         state: present
         update_cache: true
-      when: ansible_os_family == "Debian"
+      when: ansible_facts["os_family"] == "Debian"
       # note: wezterm + atuin are not in Debian repos — install upstream
       # (wezterm apt repo, atuin install script) manually for now
 
@@ -36,13 +36,13 @@
       ansible.builtin.shell: |
         sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
       args:
-        creates: "{{ ansible_env.HOME }}/.local/bin/chezmoi"
-      when: ansible_os_family == "Debian"
+        creates: "{{ lookup('ansible.builtin.env', 'HOME') }}/.local/bin/chezmoi"
+      when: ansible_facts["os_family"] == "Debian"
 
     - name: Set login shell to fish
       become: true
       ansible.builtin.user:
-        name: "{{ ansible_env.USER }}"
+        name: "{{ lookup('ansible.builtin.env', 'USER') }}"
         shell: /usr/bin/fish
 
     - name: Enable syncthing user service
@@ -58,9 +58,9 @@
       ansible.builtin.command: >
         chezmoi init --source "{{ playbook_dir }}/.."
       args:
-        creates: "{{ ansible_env.HOME }}/.local/share/chezmoi/.chezmoiversion"
-      # ^ creates-guard is imperfect; chezmoi init is idempotent anyway
-      # (promptOnce skips prompts when data already exists)
+        # chezmoi.toml only exists after first init; init is idempotent anyway
+        # (promptOnce skips prompts when data already exists)
+        creates: "{{ lookup('ansible.builtin.env', 'HOME') }}/.config/chezmoi/chezmoi.toml"
 
     - name: Apply dotfiles
       become: false
