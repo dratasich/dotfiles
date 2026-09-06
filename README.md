@@ -43,7 +43,3 @@ chezmoi diff                              # what would change
 chezmoi apply                             # apply
 chezmoi cd && git add -A && git commit    # persist
 ```
-
-Work machine: chezmoi data with work email and `hasLocalLLM = false`.
-
-Full plan: notes repo, `3. Resources/pc-setup.md`.

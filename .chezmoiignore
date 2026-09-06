@@ -1,5 +1,11 @@
-README.md
+**/README.md
 LICENSE
 bootstrap.sh
 provision
 **/.gitignore
+
+# local LLM helpers only make sense where llama.cpp runs
+{{- if not .hasLocalLLM }}
+.local/bin/llama-*
+.local/share/llama
+{{- end }}
