@@ -1,0 +1,60 @@
+---
+# Local provisioning: core CLI packages + chezmoi init/apply.
+# Scope: git, fish, neovim, wezterm, atuin, ripgrep, fd, keepassxc, syncthing.
+# IDEs/docker/runtimes stay manual (Sync/configs/install/*.install).
+#
+#   ansible-playbook provision/site.yml --ask-become-pass [-e profile=work]
+- name: Provision workstation (core CLI)
+  hosts: localhost
+  connection: local
+  vars:
+    profile: "{{ profile | default('personal') }}"
+  vars_files:
+    - vars/packages.yml
+    - "vars/{{ profile }}.yml"
+
+  tasks:
+    - name: Install core packages (Arch)
+      become: true
+      community.general.pacman:
+        name: "{{ packages_arch }}"
+        state: present
+      when: ansible_os_family == "Archlinux"
+
+    - name: Install core packages (Debian)
+      become: true
+      ansible.builtin.apt:
+        name: "{{ packages_debian }}"
+        state: present
+        update_cache: true
+      when: ansible_os_family == "Debian"
+      # note: wezterm + atuin are not in Debian repos — install upstream
+      # (wezterm apt repo, atuin install script) manually for now
+
+    - name: Install chezmoi (Debian, into ~/.local/bin)
+      become: false
+      ansible.builtin.shell: |
+        sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+      args:
+        creates: "{{ ansible_env.HOME }}/.local/bin/chezmoi"
+      when: ansible_os_family == "Debian"
+
+    - name: Set login shell to fish
+      become: true
+      ansible.builtin.user:
+        name: "{{ ansible_env.USER }}"
+        shell: /usr/bin/fish
+
+    - name: Enable syncthing user service
+      become: false
+      ansible.builtin.systemd:
+        name: syncthing
+        scope: user
+        enabled: true
+      ignore_errors: true # headless/dbus-less runs
+
+    - name: Apply dotfiles via chezmoi (this repo is the source)
+      become: false
+      ansible.builtin.command: >
+        {{ ansible_env.HOME }}/.local/bin/chezmoi init --apply
+        --source "{{ playbook_dir }}/.."

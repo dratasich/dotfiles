@@ -1,0 +1,23 @@
+---
+# package name maps per distro family (core CLI only)
+packages_arch:
+  - git
+  - fish
+  - neovim
+  - wezterm
+  - atuin
+  - ripgrep
+  - fd
+  - keepassxc
+  - syncthing
+  - chezmoi
+
+packages_debian:
+  - git
+  - fish
+  - neovim
+  - ripgrep
+  - fd-find # binary: fdfind (alias in fish conf.d/alias.fish)
+  - keepassxc
+  - syncthing
+  # wezterm, atuin: not in Debian repos — upstream install, manual

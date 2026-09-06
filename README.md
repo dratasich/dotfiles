@@ -1,0 +1,49 @@
+# dotfiles
+
+Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/), packages
+provisioned with a local Ansible playbook. Replaces the old per-tool repos
+(`nvim-config`, `fish-config`, `wezterm-config`, `opencode-config`) — their
+history is preserved here via `git subtree`.
+
+Not in this repo (by design): secrets and live data stay in Syncthing
+(`~/Sync/configs/`: ssh keys, KeePass, passkeys, atuin backups).
+
+## Fresh PC
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/dratasich/dotfiles/main/bootstrap.sh | bash
+```
+
+or
+
+```sh
+git clone git@github.com:dratasich/dotfiles.git ~/repos/dotfiles
+~/repos/dotfiles/bootstrap.sh
+```
+
+Then start Syncthing and wait for `~/Sync` (KeePass, SSH keys).
+
+Package scope: core CLI only (git, fish, neovim, wezterm, atuin, ripgrep, fd,
+keepassxc, syncthing). IDEs, docker, language runtimes: manual, see
+`Sync/configs/install/*.install`.
+
+## Layout
+
+- `dot_config/` — chezmoi source for `~/.config` (nvim, fish, wezterm, opencode)
+- `.chezmoi.toml.tmpl` — per-machine data (email, `hasLocalLLM`)
+- `bootstrap.sh` — distro detect, install git+ansible, run playbook
+- `provision/` — Ansible (localhost): packages, shell, syncthing unit,
+  `chezmoi init --apply`
+
+## Daily use
+
+```sh
+chezmoi edit ~/.config/fish/config.fish   # edit via chezmoi
+chezmoi diff                              # what would change
+chezmoi apply                             # apply
+chezmoi cd && git add -A && git commit    # persist
+```
+
+Work machine: chezmoi data with work email and `hasLocalLLM = false`.
+
+Full plan: notes repo, `3. Resources/pc-setup.md`.
