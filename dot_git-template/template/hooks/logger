@@ -1,0 +1,8 @@
+#!/bin/bash
+#
+# logger functions
+
+log() {
+    script=$(basename "$0")
+    echo "[hooks/$script] $1"
+}

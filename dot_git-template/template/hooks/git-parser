@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# git parsing functions
+
+git_issues_from_last_commit() {
+    issues=$(
+        git log -1 HEAD \
+            | grep -E "#[0-9]+|[A-Z,0-9]+-[0-9]+" -o \
+            | sort \
+            | uniq \
+            | jq -R -s -c 'split("\n")' \
+          )
+    # repipe to get rid of empty string because of trailing newline
+    issues=$(echo $issues | jq -c '.[:-1]')
+    # return
+    echo "$issues"
+}
+
+git_title_from_last_commit() {
+    echo "$(git log -1 HEAD --format="%s")"
+}
+
+git_timestamp_from_last_commit() {
+    echo "$(git log -1 HEAD --format="%aI")"
+}
+
+git_issues_from_current_branch() {
+    issues=$(
+        git branch --show-current \
+            | grep -E "#[0-9]+|[A-Z,0-9]+-[0-9]+" -o \
+            | jq -R -s -c 'split("\n")' \
+          )
+    # repipe to get rid of empty string because of trailing newline
+    issues=$(echo $issues | jq -c '.[:-1]')
+    # return
+    echo "$issues"
+}
+
+git_current_branch() {
+    echo "$(git branch --show-current)"
+}

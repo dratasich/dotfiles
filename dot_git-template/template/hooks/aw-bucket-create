@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# git-hooks bucket
+# single bucket for all git-hook events
+
+# settings
+bucket="aw-git-hooks_$HOSTNAME"
+spec=$(cat <<EOF
+{"bucket":"$bucket","type":"hook","client":"git-hook","hostname":"$HOSTNAME"}
+EOF
+)
+
+AW_SERVER="http://localhost:5600"
+SCRIPT_PATH=${0%/*}
+
+# load helper functions
+. "$SCRIPT_PATH"/logger
+
+http () {
+    method=$1
+    path=$2
+    data=""  # request body
+    if [ -n "$3" ] ; then
+        data="-d $3"
+    fi
+    echo $(curl -s \
+                -X $method \
+                -H "content-type: application/json" \
+                -o /dev/null \
+                -w "%{http_code}\n" \
+                --url $AW_SERVER$path \
+                $data)
+}
+
+# check if bucket exists
+if [ "$(http GET /api/0/buckets/$bucket)" = "404" ] ; then
+    if [ "$(http POST /api/0/buckets/$bucket $spec)" = "200" ] ; then
+        log "Successfully created bucket $bucket at aw-server $AW_SERVER."
+    else
+        log "Failed to create bucket $bucket at aw-server $AW_SERVER."
+    fi
+fi

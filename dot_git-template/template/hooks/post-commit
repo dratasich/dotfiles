@@ -1,0 +1,31 @@
+#!/bin/sh
+#
+# After the entire commit process is completed, the post-commit hook runs. It
+# doesn’t take any parameters, but you can easily get the last commit by running
+# git log -1 HEAD. Generally, this script is used for notification or something
+# similar.
+#
+# To enable this hook, rename this file to "post-commit".
+
+HOOK=${0##*/}
+SCRIPT_PATH=${0%/*}
+
+# load helpers
+. "$SCRIPT_PATH"/git-parser
+
+# send event to activity watch
+event=$(jq -c <<EOF
+{
+  "timestamp": "$(git_timestamp_from_last_commit)",
+  "duration": 5.0,
+  "data": {
+    "hook": "$HOOK",
+    "origin": "$(git config --get remote.origin.url)",
+    "branch": "$(git_current_branch)",
+    "summary": "$(git_title_from_last_commit)",
+    "issues": $(git_issues_from_last_commit)
+  }
+}
+EOF
+     )
+"$SCRIPT_PATH"/aw-event-create "$event"

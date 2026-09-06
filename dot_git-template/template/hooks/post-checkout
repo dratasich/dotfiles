@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+# After you run a successful git checkout, the post-checkout hook runs; you can
+# use it to set up your working directory properly for your project environment.
+# This may mean moving in large binary files that you don’t want source
+# controlled, auto-generating documentation, or something along those lines.
+#
+# To enable this hook, rename this file to "post-checkout".
+
+HOOK=${0##*/}
+SCRIPT_PATH=${0%/*}
+
+# load helpers
+. "$SCRIPT_PATH"/git-parser
+
+# send event to activity watch
+event=$(jq -c <<EOF
+{
+  "timestamp": "$(date --iso-8601=s --utc)",
+  "duration": 2.0,
+  "data": {
+    "hook": "$HOOK",
+    "origin": "$(git config --get remote.origin.url)",
+    "branch": "$(git_current_branch)",
+    "issues": $(git_issues_from_current_branch)
+  }
+}
+EOF
+     )
+"$SCRIPT_PATH"/aw-event-create "$event"

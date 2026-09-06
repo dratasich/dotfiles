@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# git-hook event model
+# timestamp: string(datetime)
+# data: {
+#   hook*: string,     # git-hook name
+#   origin: string,    # git remote.origin.url
+#   branch: string,    # name of the current branch
+#   summary: string,   # summary what changed, e.g., first line of commit
+#   issues: [string]   # issue numbers (including # or project name)
+# }
+
+# read event data from arguments
+event=$1
+
+# settings
+BUCKET="aw-git-hooks_$HOSTNAME"
+AW_SERVER="http://localhost:5600"
+SCRIPT_PATH=${0%/*}
+
+# load helper functions
+. "$SCRIPT_PATH"/logger
+
+http () {
+    method="$1"
+    path="$2"
+    data="$3"
+    echo $(curl -s \
+                -X $method \
+                -H "content-type: application/json" \
+                -o /dev/null \
+                -w "%{http_code}\n" \
+                --url $AW_SERVER$path \
+                -d "$data")
+}
+
+# create bucket (if not exists)
+"$SCRIPT_PATH"/aw-bucket-create
+
+# check event body
+if jq -e . >/dev/null 2>&1 <<<"$event"; then
+    # send event
+    if [ "$(http POST /api/0/buckets/$BUCKET/events "$event")" = "200" ] ; then
+        log "Successfully created event $event in bucket $BUCKET at aw-server $AW_SERVER."
+    else
+        log "Failed to create event $event in bucket $BUCKET at aw-server $AW_SERVER."
+    fi
+else
+    log "Failed to parse event as json."
+fi
