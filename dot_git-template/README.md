@@ -1,6 +1,5 @@
 # git-templates
 
-
 ## Features
 
 - [x] Copies hooks into `.git/hooks` on `git clone` and `git init` given the
@@ -25,33 +24,31 @@
 - [x] Add branch
 - [x] Add first line of commit message (summary/title)
 
-
 ## Install
 
 Make this repository the template for the `.git` directory of a repository.
 
 ```bash
-$ git clone git@github.com:dratasich/git-templates.git
-$ ln -s git-templates/template $HOME/.git-template
-$ git config --global init.templatedir '~/.git-template'
+git clone git@github.com:dratasich/git-templates.git
+ln -s git-templates/template $HOME/.git-template
+git config --global init.templatedir '~/.git-template'
 ```
 
 As soon as a new repo is cloned or initialized the hooks are copied to the repo's `.git/hooks` folder.
 
 To update an existing `.git` directory use:
+
 ```bash
-$ cd <a-repository>
-$ rsync --archive --verbose --compress --cvs-exclude $HOME/.git-template/hooks/ .git/hooks --delete
+cd <a-repository>
+rsync --archive --verbose --compress --cvs-exclude $HOME/.git-template/hooks/ .git/hooks --delete
 ```
 
-For convenience you can use the `update` script
+For convenience you can use the `git-template-update` script
 to recursively sync all `.git` folders given a root directory.
 
 ```bash
-$ ./update.sh <path-to-repos>
+git-template-update <path-to-repos>
 ```
-
-For more infos check `./update.sh -h`.
 
 ## References
 
