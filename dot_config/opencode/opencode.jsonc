@@ -1,0 +1,69 @@
+// https://opencode.ai/docs/config/
+{
+  "$schema": "https://opencode.ai/config.json",
+  // though .env and .gitignore are considered
+  // (https://github.com/anomalyco/opencode/commit/4c2e888709fde5aa870d426cf272c6d00495d5b5)
+  // (https://github.com/anomalyco/opencode/issues/4969)
+  // disallow everything by default, select agent for specific permissions
+  "permission": {
+    "read": {
+      // order matters (!)
+      // outside of project
+      "~": "deny",
+      "/*": "deny", // this seems to catch all
+      // inside the project
+      "*": "allow",
+      // secrets
+      "*.env*": "deny",
+      "*secret*": "deny",
+      "*token*": "deny",
+      "*password*": "deny",
+      "secrets/**": "deny",
+      "credentials/**": "deny",
+      // certificates and keys
+      "id*": "deny",
+      "*.pem": "deny",
+      "*.key": "deny",
+      "*.crt": "deny",
+      "*.p12": "deny",
+      "*.keystore": "deny",
+      "*.jks": "deny",
+      // other
+      ".git": "deny",
+    },
+    "bash": {
+      // be careful as the agent can request for any command (!)
+      "*": "ask",
+      "find *": "allow",
+      "ls *": "allow",
+      "head *": "allow",
+      "tail *": "allow",
+      "echo *": "allow",
+      "grep *": "allow",
+      "rm": "deny",
+      // git
+      "git status": "allow",
+      "git diff": "allow",
+      "git merge": "deny",
+      "git revert": "deny",
+      "git reset": "deny",
+      "git rebase": "deny",
+      // python stuff
+      "uv run pytest": "allow",
+      "uv tool *": "deny",
+      // in case i want to use openspec sometime :)
+      "openspec archive --yes --skip-specs": "deny",
+    }
+  },
+  // do not allow scanning at all
+  // see watcher, however this is experimental
+  // use a lightweight cloud model for title generation to avoid the local model
+  // being called simultaneously for two sessions (causes stalling, issue #33126)
+  "small_model": "opencode/deepseek-v4-flash-free",
+  "instructions": [
+    // typically available in the projects
+    "README.md",
+    "CONTRIBUTING.md",
+    // "AGENTS.md", // automatically loaded by agents in projects
+  ],
+}
