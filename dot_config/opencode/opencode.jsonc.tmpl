@@ -70,6 +70,7 @@
     "CONTRIBUTING.md",
     // "AGENTS.md", // automatically loaded by agents in projects
   ],
+{{- if .hasLocalLLM }}
   // MCP servers
   "mcp": {
     "browsermcp": {
@@ -82,7 +83,6 @@
       "enabled": true
     }
   },
-{{- if .hasLocalLLM }}
   // other providers and local models
   "provider": {
     "llama.cpp": {
