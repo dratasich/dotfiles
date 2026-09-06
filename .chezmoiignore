@@ -6,6 +6,5 @@ provision
 
 # local LLM helpers only make sense where llama.cpp runs
 {{- if not .hasLocalLLM }}
-.local/bin/llama-*
-.local/share/llama
+.local/bin/llm-*
 {{- end }}
