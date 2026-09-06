@@ -2,12 +2,17 @@
 
 alias v="nvim"
 
+{{- if eq .chezmoi.osRelease.idLike "debian" }}
+# debian/ubuntu rename the binaries (fd → fdfind, bat → batcat)
 alias fd="fdfind"
 alias bat="batcat"
+{{- end }}
 
 alias k kubectl
 alias gitlog 'git log --all --graph --decorate'
 alias pwdgen 'head /dev/urandom | tr -dc A-Za-z0-9 | head -c32'
+
+alias q 'pi --no-context-files --no-session --thinking off --model github-copilot/grok-code-fast-1 -p'
 
 # --- functions ---
 
