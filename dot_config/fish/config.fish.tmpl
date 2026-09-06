@@ -32,3 +32,10 @@ set -xga PATH $GOPATH/bin
 
 # gaming
 set -xg MANGOHUD 1
+
+{{- if .useKeePassXC }}
+# godeez — token from KeePassXC entry "godeez" (password field);
+# syncs between machines via the Syncthing'd kdbx. Database must be
+# unlocked when `chezmoi apply` runs, else apply blocks on the unlock prompt.
+set -xg DEEZER_ARL "{{ (keepassxc "godeez").Password }}"
+{{- end }}
