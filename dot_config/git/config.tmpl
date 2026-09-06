@@ -1,0 +1,16 @@
+[user]
+	email = {{ .email | quote }}
+	name = Denise Ratasich
+[push]
+	default = simple
+[core]
+	editor = emacs -nw
+	autocrlf = input
+[merge]
+	conflictstyle = diff3
+[color]
+	ui = auto
+[init]
+	templatedir = ~/.git-template
+[protocol "file"]
+	allow = never
