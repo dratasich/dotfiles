@@ -8,10 +8,10 @@
   hosts: localhost
   connection: local
   vars:
-    profile: "{{ profile | default('personal') }}"
+    profile_resolved: "{{ profile | default('personal') }}"
   vars_files:
     - vars/packages.yml
-    - "vars/{{ profile }}.yml"
+    - "vars/{{ profile_resolved }}.yml"
 
   tasks:
     - name: Install core packages (Arch)
@@ -53,8 +53,15 @@
         enabled: true
       ignore_errors: true # headless/dbus-less runs
 
-    - name: Apply dotfiles via chezmoi (this repo is the source)
+    - name: Init chezmoi with this repo as source (first run only)
       become: false
       ansible.builtin.command: >
-        {{ ansible_env.HOME }}/.local/bin/chezmoi init --apply
-        --source "{{ playbook_dir }}/.."
+        chezmoi init --source "{{ playbook_dir }}/.."
+      args:
+        creates: "{{ ansible_env.HOME }}/.local/share/chezmoi/.chezmoiversion"
+      # ^ creates-guard is imperfect; chezmoi init is idempotent anyway
+      # (promptOnce skips prompts when data already exists)
+
+    - name: Apply dotfiles
+      become: false
+      ansible.builtin.command: chezmoi apply

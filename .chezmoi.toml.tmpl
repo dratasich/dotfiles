@@ -1,7 +1,14 @@
 {{- /* per-machine data; prompted once, stored in ~/.config/chezmoi/chezmoi.toml */ -}}
-{{- $email := promptStringOnce . "email" "Git email (personal: dratasich@users.noreply.github.com, work: denise.ratasich@oebb.at)" -}}
-{{- $name := promptStringOnce . "name" "Git name (personal: Denise Ratasich, work: Ratasich Denise (BCC.IKT))" -}}
-{{- $hasLocalLLM := promptBoolOnce . "hasLocalLLM" "Local LLM via llama.cpp available (true on jerry)" -}}
+{{- /* defaults may be overridden */ -}}
+{{- $email := promptStringOnce . "email" "Git email" "dratasich@users.noreply.github.com" -}}
+{{- $name := promptStringOnce . "name" "Git name" "Denise Ratasich" -}}
+{{- $hasLocalLLM := promptBoolOnce . "hasLocalLLM" "Local LLM via llama.cpp available" true -}}
+
+{{- /* keep sourceDir pointing at the repo when it is a working clone (not a chezmoi-managed copy) */ -}}
+{{- $sourceDir := .chezmoi.sourceDir -}}
+{{- if ne $sourceDir (joinPath .chezmoi.homeDir ".local" "share" "chezmoi") }}
+sourceDir = {{ $sourceDir | quote }}
+{{ end -}}
 
 [data]
     email = {{ $email | quote }}
