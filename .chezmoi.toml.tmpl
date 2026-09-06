@@ -1,7 +1,9 @@
 {{- /* per-machine data; prompted once, stored in ~/.config/chezmoi/chezmoi.toml */ -}}
 {{- $email := promptStringOnce . "email" "Git email (personal: dratasich@users.noreply.github.com, work: denise.ratasich@oebb.at)" -}}
+{{- $name := promptStringOnce . "name" "Git name (personal: Denise Ratasich, work: Ratasich Denise (BCC.IKT))" -}}
 {{- $hasLocalLLM := promptBoolOnce . "hasLocalLLM" "Local LLM via llama.cpp available (true on jerry)" -}}
 
 [data]
     email = {{ $email | quote }}
+    name = {{ $name | quote }}
     hasLocalLLM = {{ $hasLocalLLM }}

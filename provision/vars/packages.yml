@@ -11,6 +11,7 @@ packages_arch:
   - keepassxc
   - syncthing
   - chezmoi
+  - podman
 
 packages_debian:
   - git
