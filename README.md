@@ -11,15 +11,11 @@ Not in this repo (by design): secrets and live data stay in Syncthing
 ## Fresh PC
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/dratasich/dotfiles/main/bootstrap.sh | bash
-```
-
-or
-
-```sh
 git clone git@github.com:dratasich/dotfiles.git ~/repos/dotfiles
-~/repos/dotfiles/bootstrap.sh
+~/repos/dotfiles/bootstrap.sh personal
 ```
+
+The script provisions from the clone it lives in.
 
 Then start Syncthing and wait for `~/Sync` (KeePass, SSH keys).
 
@@ -30,7 +26,7 @@ keepassxc, syncthing). IDEs, docker, language runtimes: manual, see
 ## Layout
 
 - `dot_config/` — chezmoi source for `~/.config` (nvim, fish, wezterm, opencode)
-- `.chezmoi.toml.tmpl` — per-machine data (email, `hasLocalLLM`)
+- `.chezmoi.toml.tmpl` — per-machine data, values come from `provision/vars/<profile>.yml` (`bootstrap.sh [personal|work]`)
 - `bootstrap.sh` — distro detect, install git+ansible, run playbook
 - `provision/` — Ansible (localhost): packages, shell, syncthing unit,
   `chezmoi init --apply`

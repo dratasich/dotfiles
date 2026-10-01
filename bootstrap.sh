@@ -1,30 +1,24 @@
 #!/bin/sh
-# Bootstrap a fresh PC: install git+ansible, clone dotfiles, run playbook.
-# Usage: curl -fsSL <raw-url>/bootstrap.sh | bash   (or run from a clone)
+# Bootstrap a fresh PC: install git+ansible, run playbook from this clone.
+# Usage: git clone <repo> && ./bootstrap.sh [personal|work]
 set -e
 
-REPO_DIR="${DOTFILES_DIR:-$HOME/repos/dotfiles}"
-REPO_URL="${DOTFILES_REPO:-git@github.com:dratasich/dotfiles.git}"
+REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-# 1. git + ansible (chicken-egg: needed to clone and provision)
+# 1. git + ansible (chicken-egg: needed to provision)
 if command -v pacman >/dev/null 2>&1; then
-    sudo pacman -S --needed --noconfirm git ansible
+  sudo pacman -S --needed --noconfirm git ansible
 elif command -v apt-get >/dev/null 2>&1; then
-    sudo apt-get update
-    sudo apt-get install -y git ansible
+  sudo apt-get update
+  sudo apt-get install -y git ansible
 else
-    echo "No pacman/apt-get found — install git and ansible manually." >&2
-    exit 1
+  echo "No pacman/apt-get found — install git and ansible manually." >&2
+  exit 1
 fi
 
-# 2. clone (skip when already running from a clone)
-if [ ! -d "$REPO_DIR/.git" ]; then
-    git clone "$REPO_URL" "$REPO_DIR"
-fi
-
-# 3. provision (packages, shell, syncthing unit, chezmoi init --apply)
+# 2. provision (packages, shell, syncthing unit, chezmoi init --apply)
 PROFILE="${1:-personal}"
 ansible-playbook "$REPO_DIR/provision/site.yml" \
-    --ask-become-pass --extra-vars "profile=$PROFILE"
+  --ask-become-pass --extra-vars "profile=$PROFILE"
 
 echo "Done. Start Syncthing and wait for ~/Sync (KeePass, SSH keys)."

@@ -1,9 +1,8 @@
-{{- /* per-machine data; prompted once, stored in ~/.config/chezmoi/chezmoi.toml */ -}}
-{{- /* defaults may be overridden */ -}}
-{{- $email := promptStringOnce . "email" "Git email" "dratasich@users.noreply.github.com" -}}
-{{- $name := promptStringOnce . "name" "Git name" "Denise Ratasich" -}}
-{{- $hasLocalLLM := promptBoolOnce . "hasLocalLLM" "Local LLM via llama.cpp available" true -}}
-{{- $useKeePassXC := promptBoolOnce . "useKeePassXC" "Secrets from KeePassXC (kdbx via Syncthing)" true -}}
+{{- /* per-machine data; answers come from provision/vars/<profile>.yml (flags), else prompted */ -}}
+{{- $email := promptString "email" -}}
+{{- $name := promptString "name" -}}
+{{- $hasLocalLLM := promptBool "hasLocalLLM" -}}
+{{- $useKeePassXC := promptBool "useKeePassXC" -}}
 
 {{- /* keep sourceDir pointing at the repo when it is a working clone (not a chezmoi-managed copy) */ -}}
 {{- $sourceDir := .chezmoi.sourceDir -}}

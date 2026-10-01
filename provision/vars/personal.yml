@@ -3,3 +3,4 @@
 git_email: dratasich@users.noreply.github.com
 git_name: Denise Ratasich
 has_local_llm: true
+use_keepassxc: true

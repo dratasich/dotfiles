@@ -55,11 +55,19 @@
 
     - name: Init chezmoi with this repo as source (first run only)
       become: false
-      ansible.builtin.command: >
-        chezmoi init --source "{{ playbook_dir }}/.."
+      ansible.builtin.command:
+        argv:
+          - chezmoi
+          - init
+          - --source
+          - "{{ playbook_dir }}/.."
+          - --promptString
+          - "email={{ git_email }},name={{ git_name }}"
+          - --promptBool
+          - "hasLocalLLM={{ has_local_llm | lower }},useKeePassXC={{ use_keepassxc | lower }}"
       args:
-        # chezmoi.toml only exists after first init; init is idempotent anyway
-        # (promptOnce skips prompts when data already exists)
+        # chezmoi.toml only exists after first init
+        # answers to the template prompts come from vars/<profile>.yml
         creates: "{{ lookup('ansible.builtin.env', 'HOME') }}/.config/chezmoi/chezmoi.toml"
 
     - name: Apply dotfiles
