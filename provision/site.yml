@@ -1,6 +1,6 @@
 ---
 # Local provisioning: core CLI packages + chezmoi init/apply.
-# Scope: git, fish, neovim, wezterm, atuin, ripgrep, fd, keepassxc, syncthing.
+# Scope: git, editor, shell, terminal, cli-tools, keepassxc, syncthing.
 # IDEs/docker/runtimes stay manual (Sync/configs/install/*.install).
 #
 #   ansible-playbook provision/site.yml --ask-become-pass [-e profile=work]
