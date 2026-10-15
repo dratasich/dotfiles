@@ -19,13 +19,13 @@ The script provisions from the clone it lives in.
 
 Then start Syncthing and wait for `~/Sync` (KeePass, SSH keys).
 
-Package scope: core CLI only (git, fish, neovim, wezterm, atuin, ripgrep, fd,
+Package scope: core CLI only (git, editor, shell, terminal, cli-tools,
 keepassxc, syncthing). IDEs, docker, language runtimes: manual, see
 `Sync/configs/install/*.install`.
 
 ## Layout
 
-- `dot_config/` — chezmoi source for `~/.config` (nvim, fish, wezterm, opencode)
+- `dot_config/` — chezmoi source for `~/.config` (editor, shell, terminal, ai-agent)
 - `.chezmoi.toml.tmpl` — per-machine data, values come from `provision/vars/<profile>.yml` (`bootstrap.sh [personal|work]`)
 - `bootstrap.sh` — distro detect, install git+ansible, run playbook
 - `provision/` — Ansible (localhost): packages, shell, syncthing unit,
