@@ -41,5 +41,7 @@ return {
     { "<leader>ol", "<cmd>ObsidianLinks<cr>", desc = "Show links" },
     { "<leader>ot", "<cmd>ObsidianTags<cr>", desc = "Search tags" },
     { "<leader>od", "<cmd>ObsidianToday<cr>", desc = "Daily note" },
+    { "<leader>op", "<cmd>ObsidianPasteImg<cr>", desc = "Paste image" },
+    -- markdown preview is <leader>cp
   },
 }
