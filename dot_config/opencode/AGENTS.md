@@ -33,6 +33,8 @@ blacklist:
 - "*.p12"
 ```
 
+Do NOT read other license, secret or key files (e.g. from applications).
+
 ---
 
 - ASK FIRST: Before executing any command.
@@ -44,6 +46,7 @@ blacklist:
 - ONLY: Make changes within the source directory.
 - ASK FIRST: `cd` with absolute paths (should not be necessary when staying in directory anyway).
 - ALWAYS: Consider `**/*.md` in the working directory - these will contain background info, guidelines and specs.
+- ALWAYS: Prefer web documentation over decompiling/reverse-engineering third-party apps or libraries.
 
 ## TDD Only
 
