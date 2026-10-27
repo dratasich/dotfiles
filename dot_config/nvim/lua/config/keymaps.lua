@@ -12,4 +12,6 @@ vim.keymap.set("n", "<leader>fF", function()
 end, { desc = "Find files (incl. gitignored)" })
 
 -- jk | Escaping!
-vim.keymap.set("i", "jk", "<ESC>")
+-- <ESC> = Ctrl-[
+vim.keymap.set("i", "jk", "<ESC>", { noremap = true, silent = true })
+vim.keymap.set("v", "jk", "<ESC>", { noremap = true, silent = true })
