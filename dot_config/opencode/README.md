@@ -48,7 +48,15 @@ npx skills find uv
 Install plugins from the command line:
 
 ```bash
-opencode plugin opencode-vim@latest --global
+opencode plugin add opencode-vim@latest
+```
+
+TUI-only plugins (like `opencode-vim`) end up in `cli.json`, server plugins in `opencode.jsonc`.
+
+The rtk plugin (shell command rewriting) is installed by rtk itself:
+
+```bash
+rtk init -g --opencode
 ```
 
 ## Connect to other providers
