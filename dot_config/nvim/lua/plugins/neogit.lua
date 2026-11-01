@@ -13,4 +13,8 @@ return {
   keys = {
     { "<leader>gg", "<cmd>Neogit<cr>", desc = "Show Neogit UI" },
   },
+  config = function()
+    -- ask for a stash message when creating a stash (not supported upstream)
+    require("config.neogit").setup({ prompt_stash_message = true })
+  end,
 }

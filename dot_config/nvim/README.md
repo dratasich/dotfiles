@@ -18,3 +18,34 @@ Refer to the [documentation](https://lazyvim.github.io/installation) to get star
 ## Cheat sheet
 
 - [LazyVim Keymaps](https://www.lazyvim.org/keymaps)
+
+## Neogit
+
+Neogit cannot name a stash while it is created, only afterwards
+(stash popup -> `m` rename), see
+[neogit#1762](https://github.com/NeogitOrg/neogit/issues/1762).
+
+`lua/config/neogit.lua` patches the stash actions, so the message is asked
+directly when the stash is created:
+
+- stash popup `z` (worktree + index), `i` (index), `x` (worktree, keep index)
+- abort with `Esc`, empty input stashes without a message
+- the message is set with `git stash push -m`, so it shows up as
+  `On <branch>: <message>` in `git stash list`
+
+Disable it in the plugin spec (`lua/plugins/neogit.lua`):
+
+```lua
+  config = function()
+    require("config.neogit").setup({ prompt_stash_message = false })
+  end,
+```
+
+## Tests
+
+```sh
+./tests/run.sh
+```
+
+Runs the [plenary](https://github.com/nvim-lua/plenary.nvim) tests headless.
+
