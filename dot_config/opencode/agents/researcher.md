@@ -2,20 +2,34 @@
 description: Researches dev and devops topics — tools, libraries, frameworks, infra patterns, changelogs, RFCs, docs
 mode: primary
 model: github-copilot/gemini-2.5-pro
-tools:
-  write: false
-  edit: false
-permission:
-  webfetch: allow
-  bash:
-    "*": ask
-    "man *": allow
-    "curl -s *": allow
-    "curl --silent *": allow
-    "*--help": allow
-    "*--version": allow
-  task:
-    "*": deny
+permissions:
+  - action: webfetch
+    resource: "*"
+    effect: allow
+  - action: shell
+    resource: "*"
+    effect: ask
+  - action: shell
+    resource: "man *"
+    effect: allow
+  - action: shell
+    resource: "curl -s *"
+    effect: allow
+  - action: shell
+    resource: "curl --silent *"
+    effect: allow
+  - action: shell
+    resource: "*--help"
+    effect: allow
+  - action: shell
+    resource: "*--version"
+    effect: allow
+  - action: subagent
+    resource: "*"
+    effect: deny
+  - action: edit
+    resource: "*"
+    effect: deny
 ---
 
 You are a research assistant for a backend developer and platform engineer.

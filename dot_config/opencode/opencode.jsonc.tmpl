@@ -5,66 +5,67 @@
   // (https://github.com/anomalyco/opencode/commit/4c2e888709fde5aa870d426cf272c6d00495d5b5)
   // (https://github.com/anomalyco/opencode/issues/4969)
   // disallow everything by default, select agent for specific permissions
-  "permission": {
-    "read": {
-      // order matters (!)
-      // outside of project
-      "~": "deny",
-      "/*": "deny", // this seems to catch all
-      // inside the project
-      "*": "allow",
-      // secrets
-      "*.env*": "deny",
-      "*secret*": "deny",
-      "*token*": "deny",
-      "*password*": "deny",
-      "secrets/**": "deny",
-      "credentials/**": "deny",
-      // certificates and keys
-      "id*": "deny",
-      "*.pem": "deny",
-      "*.key": "deny",
-      "*.crt": "deny",
-      "*.p12": "deny",
-      "*.keystore": "deny",
-      "*.jks": "deny",
-      // other
-      ".git": "deny",
-    },
-    "bash": {
-      // be careful as the agent can request for any command (!)
-      "*": "ask",
-      "rtk *": "allow",
-      "find *": "allow",
-      "ls *": "allow",
-      "head *": "allow",
-      "tail *": "allow",
-      "echo *": "allow",
-      "grep *": "allow",
-      "rm": "deny",
-      // git
-      "git status": "allow",
-      "git diff": "allow",
-      "git merge": "deny",
-      "git revert": "deny",
-      "git reset": "deny",
-      "git rebase": "deny",
-      // python stuff
-      "uv run pytest": "allow",
-      "uv tool *": "deny",
-      // in case i want to use openspec sometime :)
-      "openspec archive --yes --skip-specs": "deny",
-    }
+  // V2: one ordered "permissions" array (was "permission" per tool), last match wins
+  "permissions": [
+    // read: order matters (!)
+    // outside of project
+    { "action": "read", "resource": "~", "effect": "deny" },
+    { "action": "read", "resource": "/*", "effect": "deny" }, // this seems to catch all
+    // inside the project
+    { "action": "read", "resource": "*", "effect": "allow" },
+    // secrets
+    { "action": "read", "resource": "*.env*", "effect": "deny" },
+    { "action": "read", "resource": "*secret*", "effect": "deny" },
+    { "action": "read", "resource": "*token*", "effect": "deny" },
+    { "action": "read", "resource": "*password*", "effect": "deny" },
+    { "action": "read", "resource": "secrets/**", "effect": "deny" },
+    { "action": "read", "resource": "credentials/**", "effect": "deny" },
+    // certificates and keys
+    { "action": "read", "resource": "id*", "effect": "deny" },
+    { "action": "read", "resource": "*.pem", "effect": "deny" },
+    { "action": "read", "resource": "*.key", "effect": "deny" },
+    { "action": "read", "resource": "*.crt", "effect": "deny" },
+    { "action": "read", "resource": "*.p12", "effect": "deny" },
+    { "action": "read", "resource": "*.keystore", "effect": "deny" },
+    { "action": "read", "resource": "*.jks", "effect": "deny" },
+    // other
+    { "action": "read", "resource": ".git", "effect": "deny" },
+    // V1 asked before touching paths outside the project, V2 allows it by default
+    { "action": "external_directory", "resource": "*", "effect": "deny" },
+    // shell (was "bash" in V1)
+    // be careful as the agent can request for any command (!)
+    { "action": "shell", "resource": "*", "effect": "ask" },
+    { "action": "shell", "resource": "rtk *", "effect": "allow" },
+    { "action": "shell", "resource": "find *", "effect": "allow" },
+    { "action": "shell", "resource": "ls *", "effect": "allow" },
+    { "action": "shell", "resource": "head *", "effect": "allow" },
+    { "action": "shell", "resource": "tail *", "effect": "allow" },
+    { "action": "shell", "resource": "echo *", "effect": "allow" },
+    { "action": "shell", "resource": "grep *", "effect": "allow" },
+    { "action": "shell", "resource": "rm *", "effect": "deny" },
+    // git
+    { "action": "shell", "resource": "git status", "effect": "allow" },
+    { "action": "shell", "resource": "git diff", "effect": "allow" },
+    { "action": "shell", "resource": "git merge", "effect": "deny" },
+    { "action": "shell", "resource": "git revert", "effect": "deny" },
+    { "action": "shell", "resource": "git reset", "effect": "deny" },
+    { "action": "shell", "resource": "git rebase", "effect": "deny" },
+    // python stuff
+    { "action": "shell", "resource": "uv run pytest", "effect": "allow" },
+    { "action": "shell", "resource": "uv tool *", "effect": "deny" },
+    // in case i want to use openspec sometime :)
+    { "action": "shell", "resource": "openspec archive --yes --skip-specs", "effect": "deny" },
+  ],
+  // default model: OpenCode Go - MiniMax M3
+  "model": "opencode-go/minimax-m3",
+  "agents": {
+    // do not allow scanning at all
+    // see watcher, however this is experimental
+    // use a lightweight cloud model for title generation to avoid the local model
+    // being called simultaneously for two sessions (causes stalling, issue #33126)
+    // V1: "small_model"
+    "title": { "model": "opencode/deepseek-v4-flash-free" },
   },
-  // do not allow scanning at all
-  // see watcher, however this is experimental
-  // use a lightweight cloud model for title generation to avoid the local model
-  // being called simultaneously for two sessions (causes stalling, issue #33126)
-  "small_model": "opencode/deepseek-v4-flash-free",
-{{- if .hasLocalLLM }}
-  // default model: local qwen3-8b via llama.cpp (fast, tool calling works)
-  "model": "llama.cpp/qwen3-8b",
-{{- end }}
   "instructions": [
     // typically available in the projects
     "README.md",
@@ -74,28 +75,32 @@
 {{- if .hasLocalLLM }}
   // MCP servers
   "mcp": {
-    "browsermcp": {
-      "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "@browsermcp/mcp@latest"
-      ],
-      "enabled": true
+    "servers": {
+      "browsermcp": {
+        "type": "local",
+        "command": [
+          "npx",
+          "-y",
+          "@browsermcp/mcp@latest"
+        ],
+        "disabled": false
+      }
     }
   },
   // other providers and local models
-  "provider": {
+  "providers": {
     "llama.cpp": {
-      "npm": "@ai-sdk/openai-compatible",
+      "package": "aisdk:@ai-sdk/openai-compatible",
       "name": "llama.cpp (local)",
-      "options": {
+      "settings": {
         "baseURL": "http://127.0.0.1:12345/v1"
       },
       "models": {
         "qwen3-8b": {
           "name": "Qwen3 8B",
-          "tool_call": true,
+          "capabilities": {
+            "tools": true
+          },
           "limit": {
             "context": 32768,
             "output": 8192
@@ -103,7 +108,9 @@
         },
         "devstral-small-2-2512": {
           "name": "Devstral Small 2 24B Instruct 2512",
-          "tool_call": true,
+          "capabilities": {
+            "tools": true
+          },
           "limit": {
             "context": 32768,
             "output": 8192

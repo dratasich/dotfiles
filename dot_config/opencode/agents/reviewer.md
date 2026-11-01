@@ -1,19 +1,31 @@
 ---
 description: Reviews code for quality, security, and correctness — suggests fixes without making changes
 mode: subagent
-tools:
-  write: false
-  edit: false
-permission:
-  webfetch: allow
-  bash:
-    "*": ask
-    "git diff *": allow
-    "git log *": allow
-    "git status": allow
-    "*--help": allow
-  task:
-    "*": deny
+permissions:
+  - action: webfetch
+    resource: "*"
+    effect: allow
+  - action: shell
+    resource: "*"
+    effect: ask
+  - action: shell
+    resource: "git diff *"
+    effect: allow
+  - action: shell
+    resource: "git log *"
+    effect: allow
+  - action: shell
+    resource: "git status"
+    effect: allow
+  - action: shell
+    resource: "*--help"
+    effect: allow
+  - action: subagent
+    resource: "*"
+    effect: deny
+  - action: edit
+    resource: "*"
+    effect: deny
 ---
 
 You are a senior developer and platform engineer.
