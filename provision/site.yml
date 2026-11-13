@@ -60,7 +60,7 @@
           - --source
           - "{{ playbook_dir }}/.."
           - --promptString
-          - "email={{ git_email }},name={{ git_name }}"
+          - "email={{ git_email }},name={{ git_name }},syncConfigPath={{ sync_config_path | default('~/Sync/configs') }}"
           - --promptBool
           - "hasLocalLLM={{ has_local_llm | lower }},useKeePassXC={{ use_keepassxc | lower }}"
       args:

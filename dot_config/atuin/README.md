@@ -1,7 +1,7 @@
 # atuin
 
 Activated via `Ctrl-r`.
-Stores sqlite history.db in `~/sync/configs/atuin/`.
+Stores sqlite history.db in `~/Sync/configs/atuin/`.
 
 ## Fresh Start
 

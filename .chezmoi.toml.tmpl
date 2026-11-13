@@ -3,6 +3,13 @@
 {{- $name := promptString "name" -}}
 {{- $hasLocalLLM := promptBool "hasLocalLLM" -}}
 {{- $useKeePassXC := promptBool "useKeePassXC" -}}
+{{- /* base path of the Syncthing-synced configs (atuin db/key, keepassx, ...) */ -}}
+{{- $syncConfigPath := promptString "syncConfigPath" "~/sync/configs" -}}
+{{- /* keepassxc-cli does not expand "~", so hand it an absolute path */ -}}
+{{- $syncConfigAbs := $syncConfigPath -}}
+{{- if hasPrefix "~/" $syncConfigPath -}}
+{{- $syncConfigAbs = joinPath .chezmoi.homeDir (trimPrefix "~/" $syncConfigPath) -}}
+{{- end -}}
 
 {{- /* keep sourceDir pointing at the repo when it is a working clone (not a chezmoi-managed copy) */ -}}
 {{- $sourceDir := .chezmoi.sourceDir -}}
@@ -13,7 +20,7 @@ sourceDir = {{ $sourceDir | quote }}
 {{- if $useKeePassXC }}
 # keepassxc integration (keepassxc-cli): secrets live in the Syncthing'd kdbx
 [keepassxc]
-    database = {{ joinPath .chezmoi.homeDir "Sync" "configs" "keepassx" "private.kdbx" | quote }}
+    database = {{ joinPath $syncConfigAbs "keepassx" "private.kdbx" | quote }}
 {{ end }}
 
 [data]
@@ -21,3 +28,4 @@ sourceDir = {{ $sourceDir | quote }}
     name = {{ $name | quote }}
     hasLocalLLM = {{ $hasLocalLLM }}
     useKeePassXC = {{ $useKeePassXC }}
+    syncConfigPath = {{ $syncConfigPath | quote }}
