@@ -28,8 +28,6 @@
         state: present
         update_cache: true
       when: ansible_facts["os_family"] == "Debian"
-      # note: wezterm + atuin are not in Debian repos — install upstream
-      # (wezterm apt repo, atuin install script) manually for now
 
     - name: Install chezmoi (Debian, into ~/.local/bin)
       become: false
@@ -62,7 +60,7 @@
           - --source
           - "{{ playbook_dir }}/.."
           - --promptString
-          - "email={{ git_email }},name={{ git_name }}"
+          - "email={{ git_email }},name={{ git_name }},syncConfigPath={{ sync_config_path | default('~/Sync/configs') }}"
           - --promptBool
           - "hasLocalLLM={{ has_local_llm | lower }},useKeePassXC={{ use_keepassxc | lower }}"
       args:
