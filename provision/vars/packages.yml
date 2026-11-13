@@ -17,8 +17,9 @@ packages_debian:
   - git
   - fish
   - neovim
+  - kitty
+  - atuin
   - ripgrep
   - fd-find # binary: fdfind (alias in fish conf.d/alias.fish)
   - keepassxc
   - syncthing
-  # wezterm, atuin: not in Debian repos — upstream install, manual

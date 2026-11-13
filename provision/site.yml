@@ -28,8 +28,6 @@
         state: present
         update_cache: true
       when: ansible_facts["os_family"] == "Debian"
-      # note: wezterm + atuin are not in Debian repos — install upstream
-      # (wezterm apt repo, atuin install script) manually for now
 
     - name: Install chezmoi (Debian, into ~/.local/bin)
       become: false
